@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión - KEN-Y</title>
+    <link rel="stylesheet" href="proyecto.css">
+</head>
+<body>
+    <h1>KEN-Y</h1>
+    <h2>Iniciar Sesión</h2>
+    <div id="loginForm">
+        <input type="text" id="username" placeholder="Usuario" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
+        <button id="loginButton">Iniciar Sesión</button>
+    </div>
+    <div id="output"></div>
+
+    <!-- Enlaces de navegación -->
+    <nav>
+        <ul>
+            <li><a href="iniciar-sesion.html" id="showLogin">Iniciar Sesión</a></li> 
+            <li><a href="ken-y.html">KEN-Y</a></li> 
+            <li><a href="sistema-braille.html">Sistema Braille</a></li> 
+        </ul>
+    </nav>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KEN-Y</title>
+    <link rel="stylesheet" href="proyecto.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <h1 id="welcome-title">BIENVENIDO A KEN-Y</h1>
+    <div id="map" style="width: 100%; height: 500px;"></div>
+
+    <script>
+        // Función para manejar la síntesis de voz
+        function iniciarVoz(texto) {
+            const mensaje = new SpeechSynthesisUtterance(texto);
+            mensaje.lang = 'es-ES';  // Idioma en español
+            mensaje.volume = 1;  // Volumen al máximo
+            mensaje.rate = 1;    // Velocidad normal
+            mensaje.pitch = 1;   // Tono normal
+            speechSynthesis.speak(mensaje);  // Reproducir el mensaje
+        }
+
+        // Función para cargar el mapa
+        function cargarMapa(lat, lon) {
+            const map = L.map('map').setView([lat, lon], 13); // Inicializa el mapa con las coordenadas
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Si se tiene la ubicación, mostrarla en el mapa
+            if (lat && lon) {
+                L.marker([lat, lon]).addTo(map).bindPopup('Estás aquí.').openPopup();
+            }
+        }
+
+        // Función para solicitar la ubicación del usuario
+        function solicitarUbicacion() {
+            iniciarVoz("Para ayudarte, necesito acceder a tu ubicación. Por favor, acepta el permiso.");
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    // Actualizar el mapa con la ubicación obtenida
+                    cargarMapa(lat, lon);
+
+                    // Confirmar que se obtuvo la ubicación y preguntar hacia dónde ir
+                    iniciarVoz("Gracias por permitir acceder a tu ubicación. ¿A dónde te gustaría ir?");
+                }, function() {
+                    iniciarVoz("No se pudo obtener la ubicación. Por favor, revisa los permisos.");
+                });
+            } else {
+                iniciarVoz("La geolocalización no es soportada por este navegador.");
+            }
+        }
+
+        // Función que se ejecuta cuando el documento se ha cargado
+        document.addEventListener('DOMContentLoaded', function () {
+            // Saludo inicial
+            iniciarVoz("Bienvenido a KEN-Y, existo para ayudar a personas con problemas visuales.");
+
+            // Esperar un segundo antes de solicitar la ubicación o preguntar al usuario
+            setTimeout(function() {
+                // Verificar si el navegador ya tiene los permisos de geolocalización
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+
+                        // Si la ubicación ya está disponible, actualizamos el mapa
+                        cargarMapa(lat, lon);
+
+                        // Luego de obtener la ubicación, le preguntamos al usuario
+                        iniciarVoz("Parece que ya tienes los permisos de ubicación. ¿A dónde te gustaría ir?");
+                    }, function() {
+                        // Si no tiene permisos, solicitamos la ubicación
+                        solicitarUbicacion();
+                    });
+                } else {
+                    // Si el navegador no soporta geolocalización, notificarlo
+                    iniciarVoz("La geolocalización no es soportada por este navegador.");
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal - Proyecto</title>
+    <link rel="stylesheet" href="proyecto.css">
+    <link rel="stylesheet" href="sistema braile.html">
+</head>
+<body>
+    <h1>Proyecto KEN-Y</h1>
+    <h2>Bienvenido a KEN-Y</h2>
+
+    <div id="intro">
+        <p>KEN-Y es una pagina diseñada para apoyar a personas con discapacidades visuales y auditivas.</p>
+
+        <nav>
+            <ul>
+                <li><a href="C:\proyecto\Ayuda para ciegos y sordos.html">Discapacitades visuales y auditivas </a></li> <!-- Enlace a esta misma página -->
+                <li><a href="C:\proyecto\sistema braile.html">Sistema-Braille</a></li> <!-- Nuevo enlace a la página del Sistema Braille -->
+            </ul>
+        </nav>
+
+        <button id="showLogin">Iniciar Sesión</button>
+    </div>
+
+    <div id="loginForm" style="display: none;">
+        <h2>Iniciar Sesión</h2>
+        <input type="text" id="username" placeholder="Usuario" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
+        <button id="loginButton">Iniciar Sesión</button>
+    </div>
+
+    <div id="output"></div>
+
+    <script>
+
+        document.getElementById('showLogin').onclick = function() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        };
+
+    
+        document.getElementById('loginButton').onclick = function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username && password) {
+                document.getElementById('output').innerText = `Bienvenido, ${username}! Redirigiendo a KEN-Y...`;
+                window.location.href = 'ken-y.html'; 
+            } else {
+                alert("Por favor, completa ambos campos.");
+            }
+        };
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Principal - Proyecto</title>
+    <link rel="stylesheet" href="proyecto.css">
+    <link rel="stylesheet" href="sistema braile.html">
+</head>
+<body>
+    <h1>Proyecto KEN-Y</h1>
+    <h2>Bienvenido a KEN-Y</h2>
+
+    <div id="intro">
+        <p>KEN-Y es una pagina diseñada para apoyar a personas con discapacidades visuales y auditivas.</p>
+
+        <nav>
+            <ul>
+                <li><a href="C:\proyecto\Ayuda para ciegos y sordos.html">Discapacitades visuales y auditivas </a></li> <!-- Enlace a esta misma página -->
+                <li><a href="C:\proyecto\sistema braile.html">Sistema-Braille</a></li> <!-- Nuevo enlace a la página del Sistema Braille -->
+            </ul>
+        </nav>
+
+        <button id="showLogin">Iniciar Sesión</button>
+    </div>
+
+    <div id="loginForm" style="display: none;">
+        <h2>Iniciar Sesión</h2>
+        <input type="text" id="username" placeholder="Usuario" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
+        <button id="loginButton">Iniciar Sesión</button>
+    </div>
+
+    <div id="output"></div>
+
+    <script>
+
+        document.getElementById('showLogin').onclick = function() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        };
+
+    
+        document.getElementById('loginButton').onclick = function() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username && password) {
+                document.getElementById('output').innerText = `Bienvenido, ${username}! Redirigiendo a KEN-Y...`;
+                window.location.href = 'ken-y.html'; 
+            } else {
+                alert("Por favor, completa ambos campos.");
+            }
+        };
+    </script>
+</body>
+</html>
